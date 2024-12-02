@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -31,7 +32,7 @@ public class TankController : MonoBehaviour
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        _canon = transform.GetChild(3).gameObject;
+        _canon = transform.GetChild(3).GameObject();
         if(_rigidbody == null)
         { 
             Debug.LogWarning("No rigidbody attached");
@@ -49,6 +50,14 @@ public class TankController : MonoBehaviour
         _rigidbody.AddForce(transform.forward * (_linearForce * _linearMovementInput));
         _rigidbody.AddRelativeTorque(0, _turnForce * _turnMovementInput, 0);
         
+        //Rotate the canon around the y-axis
+        _canon.transform.Rotate(0, _canonTurnSpeed * _canonTurnInput * Time.deltaTime, 0);
+        
+        //Rotate the canon's around the x-axis if it is between the limits
+        if ( _canonAngleX <= _canonAngleXLowerLimit &&  _canonAngleX >= _canonAngleXUpperLimit)
+        {
+            _canon.transform.Rotate(_canonAngleSpeed * _canonAngleInput * Time.deltaTime, 0, 0);
+        }
         
         //Get the X angle of the Canon before rotation
         if(_canon.transform.eulerAngles.x <= 180f)
@@ -60,10 +69,7 @@ public class TankController : MonoBehaviour
             _canonAngleX = _canon.transform.eulerAngles.x - 360f;
         }
         
-        //Rotate the canon around the y-axis
-        _canon.transform.Rotate(0, _canonTurnSpeed * _canonTurnInput * Time.deltaTime, 0);
-        
-        //Get the Y angle of the Canon after rotation
+        //Get the Y angle of the Canon 
         if(_canon.transform.eulerAngles.y <= 180f)
         {
             _canonAngleY = _canon.transform.eulerAngles.y;
@@ -73,31 +79,19 @@ public class TankController : MonoBehaviour
             _canonAngleY = _canon.transform.eulerAngles.y - 360f;
         }
         
-        //If the canon is raised set the rotation on the z-axis to 0
-        if (_canonAngleX < _canonAngleXLowerLimit)
-        {
-            _canon.transform.localEulerAngles = new Vector3(_canonAngleX, _canonAngleY, 0);
-        }
-        
-        //Rotate the canon's around the x-axis if it is between the limits
-        if ( _canonAngleX <= _canonAngleXLowerLimit &&  _canonAngleX >= _canonAngleXUpperLimit)
-        {
-            _canon.transform.Rotate(_canonAngleSpeed * _canonAngleInput * Time.deltaTime, 0, 0);
-        }
-
         //If the canon's x-axis rotation is out of the limits put it back in
         if (_canonAngleX > _canonAngleXLowerLimit)
         {
             _canonAngleX = _canonAngleXLowerLimit;
-            _canon.transform.localEulerAngles = new Vector3(_canonAngleX, _canonAngleY, 0);
+            _canon.transform.localEulerAngles = new Vector3(_canonAngleX, _canon.transform.localEulerAngles.y, 0);
         }
         
         if (_canonAngleX < _canonAngleXUpperLimit)
         {
             _canonAngleX = _canonAngleXUpperLimit;
-            _canon.transform.localEulerAngles = new Vector3(_canonAngleX, _canonAngleY, 0);
+            _canon.transform.localEulerAngles = new Vector3(_canonAngleX, _canon.transform.localEulerAngles.y, 0);
         }
-   
+        
     }
     
     void OnMoveTank(InputValue value)

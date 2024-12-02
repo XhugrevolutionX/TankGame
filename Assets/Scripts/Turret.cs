@@ -17,7 +17,6 @@ public class Turret : MonoBehaviour
     void Start()
     {
         _turretDetectionZone = transform.GetChild(1).gameObject.GetComponent<TurretDetectionZone>();
-        
     }
 
     // Update is called once per frame
