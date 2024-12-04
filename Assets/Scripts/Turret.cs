@@ -11,8 +11,8 @@ public class Turret : MonoBehaviour
     [SerializeField] private Transform firePoint1;
     [SerializeField] private Transform firePoint2;
     [SerializeField] private Transform firePoint3;
-    private Coroutine shoot_routine = null;
-    
+    private bool shoot_on;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -24,21 +24,21 @@ public class Turret : MonoBehaviour
     {
         if (_turretDetectionZone._isOn)
         {
-            if(shoot_routine != null)
+            if(!shoot_on)
             {
-                StopCoroutine(shoot_routine);
+                StartCoroutine("Fire");
             }
-            shoot_routine = StartCoroutine("Fire");
         }
         else
         {
+            shoot_on = false;
             StopCoroutine("Fire");
-            shoot_routine = null;
         }
     }
     
     IEnumerator Fire()
     {
+        shoot_on = true;
         while (true)
         {
             Instantiate(bullet, firePoint0.position, firePoint0.rotation);

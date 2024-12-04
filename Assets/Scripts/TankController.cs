@@ -59,7 +59,7 @@ public class TankController : MonoBehaviour
             _canon.transform.Rotate(_canonAngleSpeed * _canonAngleInput * Time.deltaTime, 0, 0);
         }
         
-        //Get the X angle of the Canon before rotation
+        //Get the X angle of the Canon
         if(_canon.transform.eulerAngles.x <= 180f)
         {
             _canonAngleX = _canon.transform.eulerAngles.x;
