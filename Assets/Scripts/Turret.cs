@@ -16,7 +16,7 @@ public class Turret : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        _turretDetectionZone = transform.GetChild(1).gameObject.GetComponent<TurretDetectionZone>();
+        _turretDetectionZone = transform.GetChild(1).transform.GetChild(2).transform.GetChild(4).transform.GetChild(0).GetComponent<TurretDetectionZone>();
     }
 
     // Update is called once per frame
