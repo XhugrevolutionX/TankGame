@@ -1,17 +1,17 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 public class Turret : MonoBehaviour
 {
-
-    
     [SerializeField] private float fireRate = 1f;
     [SerializeField] private float _headRotateSpeed = 50;
     [SerializeField] private Projectile bullet;
     [SerializeField] private Transform firePoint0;
     [SerializeField] private Transform firePoint1;
     [SerializeField] private Transform firePoint2;
-    [SerializeField] private Transform firePoint3; 
+    [SerializeField] private Transform firePoint3;
+    [SerializeField] private bool _rotationOn = false;
     private bool _shootOn;
     private TurretDetectionZone _turretDetectionZone = null;
     private GameObject _head;
@@ -22,7 +22,8 @@ public class Turret : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        _turretDetectionZone = transform.GetChild(1).GetChild(2).GetChild(4).GetChild(0).GetComponent<TurretDetectionZone>();
+        _turretDetectionZone = transform.GetChild(1).GetChild(2).GetChild(4).GetChild(0)
+            .GetComponent<TurretDetectionZone>();
         _head = transform.GetChild(1).GetChild(2).gameObject;
     }
 
@@ -31,9 +32,12 @@ public class Turret : MonoBehaviour
     {
         if (_turretDetectionZone._isOn)
         {
-            StartCoroutine("DetectionDelay");
+            if (_rotationOn)
+            {
+                StartCoroutine("DetectionDelay");
+            }
             
-            if(!_shootOn)
+            if (!_shootOn && _headStopRotation)
             {
                 StartCoroutine("Fire");
             }
@@ -46,7 +50,7 @@ public class Turret : MonoBehaviour
             StopCoroutine("Fire");
         }
 
-        if (!_headStopRotation)
+        if (_rotationOn && !_headStopRotation)
         {
             //Get the Y angle of the head 
             if (_head.transform.eulerAngles.y <= 180f)
@@ -59,12 +63,12 @@ public class Turret : MonoBehaviour
             }
 
             //Make the head rotate
-            if (_headAngleY >= 90)
+            if (_headAngleY >= 45)
             {
                 _headRotationDir = true;
             }
 
-            if (_headAngleY <= -90)
+            if (_headAngleY <= -45)
             {
                 _headRotationDir = false;
             }
@@ -85,11 +89,11 @@ public class Turret : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(0.2f);
-            
+
             _headStopRotation = true;
         }
     }
-    
+
     IEnumerator Fire()
     {
         _shootOn = true;
@@ -102,5 +106,4 @@ public class Turret : MonoBehaviour
             yield return new WaitForSeconds(fireRate);
         }
     }
-
 }

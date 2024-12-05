@@ -114,11 +114,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireRate: 0.5
+  _headRotateSpeed: 30
   bullet: {fileID: 8943945366884546910, guid: 33e053c124fe1684d898b5385b434d75, type: 3}
   firePoint0: {fileID: 2413352621054339480}
   firePoint1: {fileID: 6291395809610177343}
   firePoint2: {fileID: 1426651069741687091}
   firePoint3: {fileID: 8199051298602380612}
+  _rotationOn: 0
 --- !u!1 &3793367900994681551
 GameObject:
   m_ObjectHideFlags: 0

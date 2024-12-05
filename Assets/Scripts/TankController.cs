@@ -13,14 +13,15 @@ public class TankController : MonoBehaviour
     private float _turnMovementInput = 0;
     
     private GameObject _canon;
+    private GameObject _head;
     [SerializeField] private float _canonTurnSpeed = 2;
-    [SerializeField] private float _canonAngleSpeed = 2;
+    [SerializeField] private float _headAngleSpeed = 2;
     private float _canonTurnInput = 0;
-    private float _canonAngleInput = 0;
+    private float _headAngleInput = 0;
     private float _canonAngleY;
-    private float _canonAngleX;
-    private float _canonAngleXUpperLimit = -10;
-    private float _canonAngleXLowerLimit = 0;
+    private float _headAngleX;
+    private float _headAngleXUpperLimit = -10;
+    private float _headAngleXLowerLimit = 0;
     
     [SerializeField] private float fireRate = 0.5f;
     [SerializeField] private Projectile bullet;
@@ -32,6 +33,7 @@ public class TankController : MonoBehaviour
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        _head = transform.GetChild(3).GetChild(0).GameObject();
         _canon = transform.GetChild(3).GameObject();
         if(_rigidbody == null)
         { 
@@ -39,7 +41,11 @@ public class TankController : MonoBehaviour
         }
         else if (_canon == null)
         {
-            Debug.LogWarning("No Object n°3 attached (canon)");
+            Debug.LogWarning("No Object attached (canon)");
+        }
+        else if (_head == null)
+        {
+            Debug.LogWarning("No Object attached (head)");
         }
     }
 
@@ -53,23 +59,23 @@ public class TankController : MonoBehaviour
         //Rotate the canon around the y-axis
         _canon.transform.Rotate(0, _canonTurnSpeed * _canonTurnInput * Time.deltaTime, 0);
         
-        //Rotate the canon's around the x-axis if it is between the limits
-        if ( _canonAngleX <= _canonAngleXLowerLimit &&  _canonAngleX >= _canonAngleXUpperLimit)
+        //Rotate the head around the x-axis if it is between the limits
+        if ( _headAngleX <= _headAngleXLowerLimit &&  _headAngleX >= _headAngleXUpperLimit)
         {
-            _canon.transform.Rotate(_canonAngleSpeed * _canonAngleInput * Time.deltaTime, 0, 0);
+            _head.transform.Rotate(_headAngleSpeed * _headAngleInput * Time.deltaTime, 0, 0);
         }
         
         //Get the X angle of the Canon
-        if(_canon.transform.eulerAngles.x <= 180f)
+        if(_head.transform.eulerAngles.x <= 180f)
         {
-            _canonAngleX = _canon.transform.eulerAngles.x;
+            _headAngleX = _head.transform.eulerAngles.x;
         }
         else
         {
-            _canonAngleX = _canon.transform.eulerAngles.x - 360f;
+            _headAngleX = _head.transform.eulerAngles.x - 360f;
         }
         
-        //Get the Y angle of the Canon 
+        //Get the Y angle of the head 
         if(_canon.transform.eulerAngles.y <= 180f)
         {
             _canonAngleY = _canon.transform.eulerAngles.y;
@@ -80,16 +86,16 @@ public class TankController : MonoBehaviour
         }
         
         //If the canon's x-axis rotation is out of the limits put it back in
-        if (_canonAngleX > _canonAngleXLowerLimit)
+        if (_headAngleX > _headAngleXLowerLimit)
         {
-            _canonAngleX = _canonAngleXLowerLimit;
-            _canon.transform.localEulerAngles = new Vector3(_canonAngleX, _canon.transform.localEulerAngles.y, 0);
+            _headAngleX = _headAngleXLowerLimit;
+            _head.transform.localEulerAngles = new Vector3(_headAngleX, 0, 0);
         }
         
-        if (_canonAngleX < _canonAngleXUpperLimit)
+        if (_headAngleX < _headAngleXUpperLimit)
         {
-            _canonAngleX = _canonAngleXUpperLimit;
-            _canon.transform.localEulerAngles = new Vector3(_canonAngleX, _canon.transform.localEulerAngles.y, 0);
+            _headAngleX = _headAngleXUpperLimit;
+            _head.transform.localEulerAngles = new Vector3(_headAngleX, 0, 0);
         }
         
     }
@@ -111,7 +117,7 @@ public class TankController : MonoBehaviour
     
     void OnAngleBarrel(InputValue value)
     {
-        _canonAngleInput = value.Get<float>();
+        _headAngleInput = value.Get<float>();
     }
 
     IEnumerator Fire()
