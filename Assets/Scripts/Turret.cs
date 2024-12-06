@@ -16,15 +16,25 @@ public class Turret : MonoBehaviour
     private TurretDetectionZone _turretDetectionZone = null;
     private GameObject _head;
     private float _headAngleY;
+    private float _headStartAngleY;
     private bool _headRotationDir = false;
     private bool _headStopRotation = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        _turretDetectionZone = transform.GetChild(1).GetChild(2).GetChild(4).GetChild(0)
-            .GetComponent<TurretDetectionZone>();
+        _turretDetectionZone = transform.GetChild(1).GetChild(2).GetChild(4).GetChild(0).GetComponent<TurretDetectionZone>();
         _head = transform.GetChild(1).GetChild(2).gameObject;
+        
+        //Get the Y start angle of the head 
+        if (_head.transform.eulerAngles.y <= 180f)
+        {
+            _headStartAngleY = _head.transform.eulerAngles.y;
+        }
+        else
+        {
+            _headStartAngleY = _head.transform.eulerAngles.y - 360f;
+        }
     }
 
     // Update is called once per frame
@@ -32,7 +42,7 @@ public class Turret : MonoBehaviour
     {
         if (_turretDetectionZone._isOn)
         {
-            if (_rotationOn)
+            if (!_headStopRotation)
             {
                 StartCoroutine("DetectionDelay");
             }
@@ -63,12 +73,12 @@ public class Turret : MonoBehaviour
             }
 
             //Make the head rotate
-            if (_headAngleY >= 45)
+            if (_headAngleY  >= _headStartAngleY + 45)
             {
                 _headRotationDir = true;
             }
 
-            if (_headAngleY <= -45)
+            if (_headAngleY  <= _headStartAngleY - 45)
             {
                 _headRotationDir = false;
             }
@@ -89,7 +99,6 @@ public class Turret : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(0.2f);
-
             _headStopRotation = true;
         }
     }
